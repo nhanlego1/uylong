@@ -1,0 +1,6 @@
+name = Uylong Migrate data
+package = Uylong
+description = "Bebinh Migrate data"
+version = VERSION
+core = 7.x
+

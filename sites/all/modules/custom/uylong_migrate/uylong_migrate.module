@@ -1,0 +1,627 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/*
+ * Implement hook_menu
+ */
+
+function uylong_migrate_menu() {
+    $items['admin/import/product'] = array(
+      'title' => 'Import product',
+      'page callback' => 'uylong_migrate_product',
+      'access arguments' => array('access content'),
+      'type' => MENU_SUGGESTED_ITEM,
+    );
+    $items['admin/import/taxonomy'] = array(
+      'title' => 'Import Customer',
+      'page callback' => 'uylong_migrate_taxonomy',
+      'access arguments' => array('access content'),
+      'type' => MENU_SUGGESTED_ITEM,
+    );
+    $items['admin/update/redirect'] = array(
+      'title' => 'Update redirect',
+      'page callback' => 'update_redirect_content_product',
+      'access arguments' => array('access content'),
+      'type' => MENU_SUGGESTED_ITEM,
+    );
+    $items['admin/taxonomy/update/redirect'] = array(
+      'title' => 'Update redirect',
+      'page callback' => 'update_redirect_taxonmy',
+      'access arguments' => array('access content'),
+      'type' => MENU_SUGGESTED_ITEM,
+    );
+    return $items;
+}
+
+/*
+ * Implement todo for import product
+ */
+
+function uylong_migrate_product_form($form, &$form_state) {
+
+    // Use the #managed_file FAPI element to upload an image file.
+    $form['xml_fid'] = array(
+      '#title' => t('XML file'),
+      '#type' => 'managed_file',
+      //  '#description' => t('<p>This logo will be appear in Home in Application.</p><p>660 x 158 pixels.</p><p>Extensions autorisées : png gif jpg jpeg.</p>'),
+      '#default_value' => variable_get('xml_fid', ''),
+      '#upload_location' => 'public://import/',
+      '#upload_validators' => array(
+        'file_validate_extensions' => array('xml csv'),
+      ),
+    );
+
+    // Submit Button.
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Import'),
+    );
+
+    return $form;
+}
+
+/*
+ * Validate form logo
+ */
+
+function uylong_migrate_product_form_validate($form, &$form_state) {
+    if (!isset($form_state['values']['xml_fid']) || !is_numeric($form_state['values']['xml_fid'])) {
+        form_set_error('xml_fid', t('Please select an XML file to Import.'));
+    }
+}
+
+/*
+ * submit logo form
+ */
+
+function uylong_migrate_product_form_submit($form, &$form_state) {
+    // If fid is not 0 we have a valid file.
+    if ($form_state['values']['xml_fid'] != 0) {
+        $file = file_load($form_state['values']['xml_fid']);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+        $url = drupal_realpath($file->uri);
+        $xmls = simplexml_load_file($url);
+        foreach ($xmls as $xml) {
+            $node = new stdClass();
+            $node->type = 'product';
+            $node->language = 'und';
+            $node->uid = 1;
+            $node->title = $xml->title;
+            $node->created = $xml->created;
+            $node->changed = $xml->changed;
+            $node->status = $xml->status;
+
+            if ($xml->taxonomy->n1) {
+                $node->field_category['und'][0]['tid'] = get_taxonomy_id_by_name($xml->taxonomy->n1, 2);
+            }
+            if ($xml->taxonomy->n5) {
+                $node->field_brand['und'][0]['tid'] = get_taxonomy_id_by_name($xml->taxonomy->n5, 3);
+            }
+
+            $node->field_sell_price[LANGUAGE_NONE][0]['value'] = $xml->field_price->n0->value;
+            $node->field_made_in[LANGUAGE_NONE][0]['value'] = $xml->field_xuatxu->n0->value;
+            $node->field_size[LANGUAGE_NONE][0]['value'] = $xml->field_size->n0->value;
+            $node->body[LANGUAGE_NONE][0]['value'] = $xml->body;
+            $node->body[LANGUAGE_NONE][0]['format'] = 'full_html';
+            $node->field_old_path[LANGUAGE_NONE][0]['value'] = $xml->path;
+            //convert images
+            $link = mb_convert_encoding($xml->field_images->n0->node_export_file_url, 'UTF-8', 'ISO-8859-2');
+            $image = file_get_contents($link);
+            if ($image) {
+                $filename = $xml->field_images->n0->filename;
+                $file = file_save_data($image, 'public://' . $filename, FILE_EXISTS_RENAME);
+                $node->field_product_image = array(LANGUAGE_NONE => array('0' => (array) $file));
+            }
+            node_save($node);
+        }
+        //dsm($xmls);
+        return 'test';
+    }
+}
+
+/*
+ * Implement Import customer form
+ */
+
+function uylong_migrate_customer_form($form, &$form_state) {
+    // Use the #managed_file FAPI element to upload an image file.
+    $form['xls_fid'] = array(
+      '#title' => t('XLS file'),
+      '#type' => 'managed_file',
+      //  '#description' => t('<p>This logo will be appear in Home in Application.</p><p>660 x 158 pixels.</p><p>Extensions autorisées : png gif jpg jpeg.</p>'),
+      '#default_value' => variable_get('xls_fid', ''),
+      '#upload_location' => 'public://import/',
+      '#upload_validators' => array(
+        'file_validate_extensions' => array('xlsx xls'),
+      ),
+    );
+
+    // Submit Button.
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Import'),
+    );
+
+    return $form;
+}
+
+function uylong_migrate_customer_form_validate($form, &$form_state) {
+    if (!isset($form_state['values']['xls_fid']) || !is_numeric($form_state['values']['xls_fid'])) {
+        form_set_error('xls_fid', t('Please select an XML file to Import.'));
+    }
+}
+
+/*
+ * submit logo form
+ */
+
+function uylong_migrate_customer_form_submit($form, &$form_state) {
+    // If fid is not 0 we have a valid file.
+    module_load_include('inc', 'uylong_migrate', 'Excel/reader');
+    $i = 1;
+    if ($form_state['values']['xls_fid'] != 0) {
+
+        $file = file_load($form_state['values']['xls_fid']);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+        $url = drupal_realpath($file->uri);
+        $data = new Spreadsheet_Excel_Reader();
+        //encoding
+        $data->setOutputEncoding('UTF-8');
+        //read file
+        $data->read($url);
+        foreach ($data->sheets[0]['cells'] as $content) {
+//            
+//            if ($i == 30) {
+//                die;
+//            }
+            $title = $content[2];
+            if(strpos('\xE',$title)===true){
+              $title = utf8_encode($title);  
+            }
+            $node = new stdClass();
+            
+        try{
+            $node->type = 'customer';
+            $node->language = 'und';
+            $node->uid = 1;
+            $node->title = $title;
+            $node->created = REQUEST_TIME;
+            $node->changed = REQUEST_TIME;
+            $node->status = 1;
+
+            if ($content[1]) {
+                $node->field_customer_group['und'][0]['tid'] = uylong_migrate_mappping_group($content[1]);
+            }
+            if ($content[3]) {
+                $node->field_customer_address[LANGUAGE_NONE][0]['value'] = $content[3];
+            }
+            if ($content[4]) {
+                $node->field_customer_phone[LANGUAGE_NONE][0]['value'] = $content[4];
+            }
+            if ($content[5]) {
+                $node->field_customer_contact[LANGUAGE_NONE][0]['value'] = $content[5];
+            }
+            if ($content[6]) {
+                $node->field_email[LANGUAGE_NONE][0]['value'] = $content[6];
+            }
+            if ($content[7]) {
+                $node->field_customer_ddkh[LANGUAGE_NONE][0]['value'] = $content[7];
+            }
+            if ($content[8]) {
+                $node->field_customer_trans[LANGUAGE_NONE][0]['value'] = $content[8];
+            }
+            node_save($node);
+        } catch (Exception $ex) {
+            drupal_set_message($ex->getMessage().'<br/>'.$title.' can not be created. Please try enter via UTF8','error');
+            $node->type = 'customer';
+            $node->language = 'und';
+            $node->uid = 1;
+            $node->title = utf8_encode($content[2]);
+            $node->created = REQUEST_TIME;
+            $node->changed = REQUEST_TIME;
+            $node->status = 1;
+            //$node->title = utf8_encode($title);
+            if ($content[1]) {
+                $node->field_customer_group['und'][0]['tid'] = uylong_migrate_mappping_group($content[1]);
+            }
+            if ($content[3]) {
+                $node->field_customer_address[LANGUAGE_NONE][0]['value'] = utf8_encode($content[3]);
+            }
+            if ($content[4]) {
+                $node->field_customer_phone[LANGUAGE_NONE][0]['value'] = utf8_encode($content[4]);
+            }
+            if ($content[5]) {
+                $node->field_customer_contact[LANGUAGE_NONE][0]['value'] = utf8_encode($content[5]);
+            }
+            if ($content[6]) {
+                $node->field_email[LANGUAGE_NONE][0]['value'] = $content[6];
+            }
+            if ($content[7]) {
+                $node->field_customer_ddkh[LANGUAGE_NONE][0]['value'] = utf8_encode($content[7]);
+            }
+            if ($content[8]) {
+                $node->field_customer_trans[LANGUAGE_NONE][0]['value'] = utf8_encode($content[8]);
+            }
+            node_save($node);
+        }
+           
+            $i ++;
+        }
+        //dsm($xmls);
+        return 'test';
+    }
+}
+
+/*
+ * Mapping group customer
+ */
+
+function uylong_migrate_mappping_group($id) {
+    $tid = false;
+    switch ($id) {
+        case '1':
+            //Khach hang 1
+            $tid = 236;
+            break;
+        case '2':
+            //Khach hang 2
+            $tid = 237;
+            break;
+        case '3':
+            // Khách hàng sĩ
+            $tid = 238;
+            break;
+        case '4':
+            //Khách hàng tiềm năng
+            $tid = 239;
+            break;
+        case '5':
+            //Nhà Cung cấp
+            $tid = 240;
+            break;
+    }
+    return $tid;
+}
+
+/*
+ * Implement update redirect content
+ */
+
+function update_redirect_content_product() {
+    $select = db_select('node', 'n');
+    $select->fields('n', array('nid'));
+    $select->condition('type', 'product', '=');
+    $result = $select->execute()->fetchCol();
+    if ($result) {
+        $nodes = node_load_multiple($result);
+    }
+    foreach ($nodes as $node) {
+        $redirect = new stdClass();
+        redirect_object_prepare($redirect, array(
+          'source' => '',
+          'source_options' => array(),
+          'redirect' => '',
+          'redirect_options' => array(),
+          'language' => LANGUAGE_NONE,
+        ));
+        $redirect->source = $node->field_old_path[LANGUAGE_NONE][0]['value'];
+        $redirect->redirect = 'node/' . $node->nid;
+        $redirect->type = 'redirect';
+        $exixts_redirect = redirect_load_by_source($node->field_old_path[LANGUAGE_NONE][0]['value']);
+        if (!$exixts_redirect) {
+            redirect_save($redirect);
+        }
+    }
+    return 'New redirect';
+}
+
+function update_redirect_taxonmy() {
+    $connect = mysql_connect("localhost", "uylong26_user", "uylongvn") or die("Could not connect to database");
+    $db = mysql_select_db("uylong26_data", $connect) or die('');
+    mysql_query('SET character_set_results=utf8');
+    $query = 'SELECT * FROM term_data WHERE vid = 1';
+    $query = mysql_query($query);
+    while ($result = mysql_fetch_array($query)) {
+        $name = $result['name'];
+        $old_tid = $result['tid'];
+        $tid = get_taxonomy_id_by_name($name, 2);
+        $queryalias = "SELECT * FROM url_alias WHERE src = 'taxonomy/term/$old_tid'";
+
+        $urlquery = mysql_query($queryalias);
+        $urlresult = mysql_fetch_assoc($urlquery);
+        //print_r($urlresult['dst']);die;
+        $redirect = new stdClass();
+        redirect_object_prepare($redirect, array(
+          'source' => '',
+          'source_options' => array(),
+          'redirect' => '',
+          'redirect_options' => array(),
+          'language' => LANGUAGE_NONE,
+        ));
+        $redirect->source = $urlresult['dst'];
+        $redirect->redirect = 'taxonomy/term/' . $tid;
+        $redirect->type = 'redirect';
+        $exixts_redirect = redirect_load_by_source($urlresult['dst']);
+        if (!$exixts_redirect) {
+            redirect_save($redirect);
+        }
+        //print_r($tid);
+    }
+    //die;
+
+    return 'New redirect';
+}
+
+/*
+ * Implement get content url
+ */
+
+function get_url_contents($url) {
+    $crl = curl_init();
+    $timeout = 5;
+    curl_setopt($crl, CURLOPT_URL, $url);
+    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($crl, CURLOPT_CONNECTTIMEOUT, $timeout);
+    $ret = curl_exec($crl);
+
+    curl_close($crl);
+    var_dump($ret);
+    die;
+    return $ret;
+}
+
+function util_cron() {
+    $url = 'http://www.standup.com.au/feex';
+    $xmls = new SimpleXMLElement(get_url_contents($url));
+
+    foreach ($xmls as $xml) {
+        $items_ = entity_load('node', FALSE, array('type' => 'event', 'title' => $xml->title));
+        $items = array();
+        //$obj = array_pop($items_);
+
+        foreach ($items_ as $obj) {
+//          if(isset($obj->field_date['und'][0]['value']) && $obj->field_date['und'][0]['value'] == strtotime($xml->event_start)) 
+//            $items[] = $obj;
+            if (isset($obj->field_nodeid['und'][0]['value']) && $obj->field_nodeid['und'][0]['value'] == $xml->nid)
+                $items[] = $obj;
+        }
+        //get image
+        preg_match_all('/<img[^>]+>/i', $xml->field_image_fid, $result);
+        preg_match_all('/(src)=("[^"]*")/i', $result[0][0], $img);
+        $link = trim($img[0][0], 'src="');
+        $link = trim($link, '"');
+        $image = file_get_contents($link);
+
+        if (empty($items)) {
+
+            $node = new stdClass();
+            $node->type = 'event';
+            $node->title = $xml->title;
+            $node->language = LANGUAGE_NONE;
+//            $node->created = strtotime($xml->created);
+
+            $node->body['und'][0]['value'] = $xml->body;
+            $node->body['und'][0]['format'] = filter_default_format();
+            $node->field_cost['und'][0]['value'] = $xml->Cost;
+            $node->field_venue_list_text['und'][0]['value'] = $xml->where;
+            $node->field_text_comedian['und'][0]['value'] = $xml->MC;
+            $node->field_when['und'][0]['value'] = $xml->when;
+            $node->field_when['und'][0]['format'] = filter_default_format();
+            $node->field_nodeid['und'][0]['value'] = $xml->nid;
+            $filename = basename($link);
+            $file = file_save_data($image, 'public://sdcc/' . $filename, FILE_EXISTS_RENAME);
+            $node->field_image = array(LANGUAGE_NONE => array('0' => (array) $file));
+            $node->field_booking_link['und'][0]['url'] = $xml->booking;
+            $node->field_date['und'][0]['value'] = strtotime($xml->event_start);
+            //$node->field_start_registration_date['und'][0]['value'] = strtotime($xml->event_start);
+            //$node->field_file_name['und'][0]['value'] = $xml->nid;
+            $node->uid = 1;
+            $node->status = 1;
+            node_save($node);
+        } else {
+            //if(strpos($node->title, 'Open Mic Night') !== 0)
+            foreach ($items as $key => $item) {
+                $node = node_load($item->nid);
+                $node->title = $xml->title;
+                $node->body['und'][0]['value'] = $xml->body;
+                $node->body['und'][0]['format'] = filter_default_format();
+                $node->field_cost['und'][0]['value'] = $xml->Cost;
+                $node->field_venue_list_text['und'][0]['value'] = $xml->where;
+                $node->field_text_comedian['und'][0]['value'] = $xml->MC;
+                $node->field_when['und'][0]['value'] = $xml->when;
+                $node->field_when['und'][0]['format'] = filter_default_format();
+                $node->field_nodeid['und'][0]['value'] = $xml->nid;
+                $filename = basename($link);
+                $file = file_save_data($image, 'public://sdcc/' . $filename, FILE_EXISTS_RENAME);
+                $node->field_image = array(LANGUAGE_NONE => array('0' => (array) $file));
+                $node->field_booking_link['und'][0]['url'] = $xml->booking;
+                $node->field_date['und'][0]['value'] = strtotime($xml->event_start);
+                $node->uid = 1;
+                $node->status = 1;
+                node_save($node);
+            }
+        }
+    }
+}
+
+function get_taxonomy_id_by_name($name, $vid) {
+    $query = db_select('taxonomy_term_data', 't');
+    $query->fields('t', array('tid'));
+    $query->condition('name', $name, '=');
+    $query->condition('vid', $vid, '=');
+    $result = $query->execute()->fetchObject();
+    if ($result) {
+        return $result->tid;
+    }
+    return false;
+}
+
+/**
+ * Import taxonomy
+ */
+
+function uylong_migrate_taxonomy(){
+//    $terms = taxonomy_get_tree(2);
+//    foreach($terms as $term){
+//        taxonomy_term_delete($term->tid);
+//    }
+//    die;
+    $url = 'http://uylongold.local/export/term/product';
+    $crl = curl_init();
+    $timeout = 20;
+    curl_setopt($crl, CURLOPT_URL, $url);
+    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($crl, CURLOPT_CONNECTTIMEOUT, $timeout);
+    $result = curl_exec($crl);
+    curl_close($crl);
+    $data = drupal_json_decode($result);
+    foreach($data as $term){
+        $term_product = new stdClass();
+        $term_product->name = $term['name'];
+        $term_product->field_uuid[LANGUAGE_NONE][0]['value'] = $term['tid'];
+        $term_product->vid = 2;
+        taxonomy_term_save($term_product);
+        $tid = $term_product->tid;
+        $redirect = new stdClass();
+        redirect_object_prepare($redirect, array(
+          'source' => '',
+          'source_options' => array(),
+          'redirect' => '',
+          'redirect_options' => array(),
+          'language' => LANGUAGE_NONE,
+        ));
+        $redirect->source = $term['url'];
+        $redirect->redirect = 'taxonomy/term/' . $tid;
+        $redirect->type = 'redirect';
+        $exixts_redirect = redirect_load_by_source($term['url']);
+        if (!$exixts_redirect) {
+            redirect_save($redirect);
+        }
+        if($term['child']){
+           foreach($term['child'] as $child){
+                $term_child = new stdClass();
+                $term_child->name = $child['child_name'];
+                $term_child->field_uuid[LANGUAGE_NONE][0]['value'] = $child['child_tid'];
+                $term_child->parent = array($tid);
+                $term_child->vid = 2;
+                taxonomy_term_save($term_child);
+                $child_tid = $term_child->tid;
+                
+                $redirect_child = new stdClass();
+                redirect_object_prepare($redirect_child, array(
+                  'source' => '',
+                  'source_options' => array(),
+                  'redirect' => '',
+                  'redirect_options' => array(),
+                  'language' => LANGUAGE_NONE,
+                ));
+                $redirect_child->source = $child['child_url'];
+                $redirect_child->redirect = 'taxonomy/term/' . $child_tid;
+                $redirect_child->type = 'redirect';
+                $exixts_redirect = redirect_load_by_source($child['child_url']);
+                if (!$exixts_redirect) {
+                    redirect_save($redirect_child);
+                }
+            } 
+        }
+        
+    }
+    return 'done';
+}
+
+/**
+ * get tid by uuid
+ */
+function uylong_migrate_get_tid_by_uuid($uuid){
+    $query = db_select('field_data_field_uuid','uuid');
+    $query->fields('uuid');
+    $query->condition('field_uuid_value',$uuid,'=');
+    $result = $query->execute()->fetchObject();
+    if($result){
+        return $result->entity_id;
+    }else{
+        return false;
+    }
+}
+
+/**
+ * migrate node product
+ */
+function uylong_migrate_product(){
+     $url = 'http://uylongold.local/export/product';
+    $crl = curl_init();
+   // $timeout = 200;
+    curl_setopt($crl, CURLOPT_URL, $url);
+    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+   // curl_setopt($crl, CURLOPT_CONNECTTIMEOUT, $timeout);
+    $result = curl_exec($crl);
+    curl_close($crl);
+
+    $data = drupal_json_decode($result);
+
+    foreach($data as $node){
+        uylong_migrate_product_save($node);
+    }
+    return 'done';
+}
+
+/**
+ * node save product
+ */
+function uylong_migrate_product_save($data){
+    global $language;
+    $nid = $data['nid'];
+    $connect = mysql_connect("localhost", "root", "") or die("Could not connect to database");
+    $db = mysql_select_db("uylongold", $connect) or die('');
+    mysql_query('SET character_set_results=utf8');
+    $query = 'SELECT * FROM node_revisions WHERE nid = '.$nid;
+    $query = mysql_query($query);
+    $result = mysql_fetch_object($query);
+    $body = $result->body;
+    $node = new stdClass();
+    $node->type = 'product';
+    $node->language = $language->language;
+    $node->uid = 1;
+    $node->title = $data['title'];
+    $node->body[LANGUAGE_NONE][0]['value'] = $body;
+    $node->body[LANGUAGE_NONE][0]['format']  = filter_default_format();
+    $node->field_model[LANGUAGE_NONE][0]['value'] = $data['model'];
+    $node->field_made_in[LANGUAGE_NONE][0]['value'] = $data['madein'];
+    $node->field_waranty[LANGUAGE_NONE][0]['value'] = $data['waranty'];
+    $node->field_custom[LANGUAGE_NONE][0]['value'] = $data['custom'];
+    $node->field_is_new[LANGUAGE_NONE][0]['value'] = $data['isnew'];
+    $node->field_is_front[LANGUAGE_NONE][0]['value'] = $data['isfront'];
+    $image = file_get_contents($data['image']);
+    $filename = str_replace('http://uylongold.local/sites/default/files/', '', $data['image']);
+    $file = file_save_data($image, 'public://' . $filename, FILE_EXISTS_RENAME);
+    $node->field_images = array(LANGUAGE_NONE => array('0' => (array) $file));
+    if($data['category']){
+        $tid = uylong_migrate_get_tid_by_uuid($data['category']['tid']);
+        $node->field_category[LANGUAGE_NONE][0]['tid'] = $tid;
+    }
+    $node = node_submit($node);
+    node_save($node);
+    //save redirect
+    $redirect = new stdClass();
+        redirect_object_prepare($redirect, array(
+          'source' => '',
+          'source_options' => array(),
+          'redirect' => '',
+          'redirect_options' => array(),
+          'language' => LANGUAGE_NONE,
+        ));
+        $redirect->source = $data['url'];
+        $redirect->redirect = 'node/' . $node->nid;
+        $redirect->type = 'redirect';
+        $exixts_redirect = redirect_load_by_source($data['url']);
+        if (!$exixts_redirect) {
+            redirect_save($redirect);
+        }
+      
+}
