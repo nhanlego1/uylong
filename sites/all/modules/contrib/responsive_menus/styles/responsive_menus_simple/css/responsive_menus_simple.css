@@ -50,7 +50,7 @@
 }
 
 .responsive-menus.responsified.responsive-toggled.absolute .responsive-menus-simple {
-  position: absolute;
+  position: relative;
   z-index: 999;
   top: auto;
 }

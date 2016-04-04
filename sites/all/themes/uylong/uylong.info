@@ -1,89 +1,123 @@
-name = Uylong
-description = Omega based demonstration theme. Serves as a best-practice reference for the Omega documentation. Ohm will be constantly updated as best practice evolves so shouldn't be used in production.
-base theme = omega
-screenshot = screenshot.png
-engine = phptemplate
+name = Uy Long
+description = Custom sub-theme based on the the Zurb Foundation base theme.
+screenshot = images/screenshot.png
+
 core = 7.x
+engine = phptemplate
+base theme = zurb_foundation
 
-; Stylesheets
-stylesheets[all][] = css/ohm.normalize.css
-stylesheets[all][] = css/ohm.hacks.css
-stylesheets[all][] = css/ohm.styles.css
-stylesheets[all][] = css/ohm.no-query.css
+; This section controls the CSS files for your theme. There are 3 different
+; things you can do with a "stylesheets" line:
+; - Add a new stylesheet for your theme.
+; - Override a module's stylesheet. If the stylesheet you are adding uses the
+;   same filename as a stylesheet from a Drupal core or contrib module, your CSS
+;   file will be used instead of the module's file.
+; - Remove a module's stylesheet. If you specify the name of a Drupal core or
+;   contrib module's stylesheets, Drupal will remove that stylesheet if you do
+;   NOT include a file with that name with your theme.
+;
+; stylesheets[MEDIA][] = FILE
+;
+; The "FILE" is the name of the stylesheet to add/override/remove.
+; The "MEDIA" in the first set of brackets is a media type or a media query.
+; Typical CSS media types include "all", "screen", "print", and "handheld". A
+; typical media query is "screen and (max-width: 320px)".
+;
+; CSS2.1 media types: http://www.w3.org/TR/CSS21/media.html#media-types
+; CSS3 media queries: http://www.w3.org/TR/css3-mediaqueries/
 
-; Regions
-regions[branding]       = Branding
-regions[navigation]     = Navigation bar
-regions[header]         = Header
-regions[hero]           = Hero
-regions[highlighted]    = Highlighted
-regions[help]           = Help
-regions[content]        = Content
-regions[sidebar_first]  = First sidebar
-regions[sidebar_second] = Second sidebar
-regions[footer]         = Footer
+; For CSS users, load the STARTER.css file:
+stylesheets[all][] = css/STARTER.css
 
-; Layout Settings
-layout[hero][stylesheets][all][] = css/layouts/hero/ohm-hero.layout.css
+; Block loading of foundation.min.css from the base theme. This file should either
+; not exist or be blank in your subtheme. See https://drupal.org/node/263967
+stylesheets[all][] = css/normalize.css
+stylesheets[all][] = css/foundation.min.css
 
-; Settings
-settings[toggle_logo] = 1
-settings[toggle_name] = 1
-settings[toggle_slogan] = 1
-settings[toggle_node_user_picture] = 1
-settings[toggle_comment_user_picture] = 1
-settings[toggle_comment_user_verification] = 1
-settings[toggle_favicon] = 1
-settings[toggle_main_menu] = 1
-settings[toggle_secondary_menu] = 1
-settings[omega_toggle_front_page_content] = 1
-settings[default_logo] = 1
-settings[logo_path] = ''
-settings[logo_upload] = ''
-settings[default_favicon] = 1
-settings[favicon_path] = ''
-settings[favicon_upload] = ''
-settings[omega_toggle_extension_assets] = 1
-settings[omega_libraries][selectivizr][status] = 0
-settings[omega_libraries][respond][status] = 0
-settings[omega_libraries][pie][status] = 0
-settings[omega_libraries][html5shiv][status] = 1
-settings[omega_libraries][messages][status] = 1
-settings[omega_toggle_extension_compatibility] = 1
-settings[omega_conditional_classes_html] = 1
-settings[omega_apple_touch] = 1
-settings[omega_cleartype] = 1
-settings[omega_handheld_friendly] = 1
-settings[omega_mobile_optimized] = 1
-settings[omega_viewport] = 1
-settings[omega_viewport_user_scaleable] = 1
-settings[omega_chrome_edge] = 1
-settings[omega_chrome_popup] = 0
-settings[omega_chrome_notice] = 0
-settings[omega_toggle_extension_layouts] = 1
-settings[omega_layout] = ohm-hero
-settings[omega_toggle_extension_development] = 1
-settings[omega_rebuild_theme_registry] = 0
-settings[omega_rebuild_aggregates] = 0
-settings[omega_browser_width_indicator] = 0
-settings[omega_livereload] = 1
-settings[omega_livereload_script] = http://localhost:35729/livereload.js
-settings[omega_livereload_host] = localhost
-settings[omega_livereload_port] = 35729
-settings[omega_demo_regions] = 1
-settings[omega_demo_regions_list][navigation] = navigation
-settings[omega_demo_regions_list][header] = header
-settings[omega_demo_regions_list][hero] = hero
-settings[omega_demo_regions_list][highlighted] = highlighted
-settings[omega_demo_regions_list][help] = help
-settings[omega_demo_regions_list][content] = content
-settings[omega_demo_regions_list][sidebar_first] = sidebar_first
-settings[omega_demo_regions_list][sidebar_second] = sidebar_second
-settings[omega_demo_regions_list][footer] = footer
+; Foundation JavaScript.
 
-; Information added by Drupal.org packaging script on 2015-07-21
-version = "7.x-4.4"
-core = "7.x"
-project = "omega"
-datestamp = "1437473042"
+; External libraries used by Foundation (minified). Add more via Gruntfile.js.
+scripts[] = js/libs.min.js
 
+; Foundation framework scripts (minified).
+; Control specific components via Gruntfile.js.
+scripts[] = js/foundation.min.js
+
+; Theme scripts (minified).
+; Grunt will compress any custom theme scripts matching the _*.js naming convention
+; into app.min.js.
+scripts[] = js/app.min.js
+
+; This section lists the regions defined in the page.tpl.php. The name in
+; brackets is the machine name of the region. The text after the equals sign is
+; a descriptive text used on the admin/structure/blocks page.
+;
+; In the page.tpl.php, the contents of the region are output with a
+; $page['MACHINE-NAME'] variable. For example, with this line in the .info
+; file:
+;   regions[header] = Header
+; You'll use this variable in page.tpl.php:
+;   <?php print render($page['header']); ?>
+
+regions[header]              = Header
+regions[help]                = Help
+regions[highlighted]         = Highlighted
+regions[featured]            = Featured
+regions[content]             = Content
+regions[sidebar_first]       = Left Sidebar
+regions[sidebar_second]      = Right Sidebar
+regions[triptych_first]      = Callout one
+regions[triptych_middle]     = Callout two
+regions[triptych_last]       = Callout three
+regions[footer_firstcolumn]  = Footer one
+regions[footer_secondcolumn] = Footer two
+regions[footer_thirdcolumn]  = Footer three
+regions[footer_fourthcolumn] = Footer four
+regions[footer]              = Footer
+
+; Various page elements output by the theme can be toggled on and off. The
+; "features" control which of these check boxes display on the
+; admin/appearance config page. This is useful for suppressing check boxes
+; for elements not used by your sub-theme. To add a check box, uncomment the
+; entry for it below. See the Drupal 7 Theme Guide for more info:
+; http://drupal.org/node/171205#features
+
+; features[] = logo
+; features[] = name
+; features[] = slogan
+; features[] = node_user_picture
+; features[] = comment_user_picture
+; features[] = favicon
+; features[] = main_menu
+; features[] = secondary_menu
+
+; Panel Layouts
+plugins[panels][layouts] = layouts
+
+; Theme settings:
+
+; Top Bar.
+settings[zurb_foundation_top_bar_enable] = 1
+settings[zurb_foundation_top_bar_grid] = 0
+settings[zurb_foundation_top_bar_sticky] = 0
+settings[zurb_foundation_top_bar_menu_text] = 'Menu'
+settings[zurb_foundation_top_bar_custom_back_text] = 1
+settings[zurb_foundation_top_bar_back_text] = 'Back'
+settings[zurb_foundation_top_bar_is_hover] = 1
+settings[zurb_foundation_top_bar_scrolltop] = 1
+settings[zurb_foundation_top_bar_mobile_show_parent_link] = 1
+
+; Tooltips.
+settings[zurb_foundation_tooltip_enable] = 1
+settings[zurb_foundation_tooltip_position] = 'top'
+settings[zurb_foundation_tooltip_mode] = 'text'
+settings[zurb_foundation_tooltip_text] = 'More information?'
+settings[zurb_foundation_tooltip_touch] = 0
+
+; Styles and Scripts.
+settings[zurb_foundation_disable_core_css] = 0
+
+; Misc.
+settings[zurb_foundation_html_tags] = 1
+settings[zurb_foundation_messages_modal] = 0
+settings[zurb_foundation_pager_center] = 1

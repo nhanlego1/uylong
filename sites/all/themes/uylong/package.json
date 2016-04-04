@@ -1,16 +1,15 @@
 {
-  "name": "ohm",
-  "version": "1.0.0",
-  "dependencies": {},
+  "name": "STARTER",
+  "version": "0.0.2",
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-contrib-watch": "~0.4.3",
-    "grunt-contrib-compass": "~0.2.0",
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-uglify": "~0.2.0",
-    "grunt-shell": "~0.3.1"
-  },
-  "engines": {
-    "node": ">=0.8.0"
+    "node-sass": "~2.0.1",
+    "grunt": "~0.4.5",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-sass": "^0.18.0",
+    "grunt-drush": "*",
+    "node-bourbon": "1.2.3",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-uglify": "~0.5.0",
+    "load-grunt-tasks": "~0.6.0"
   }
 }
