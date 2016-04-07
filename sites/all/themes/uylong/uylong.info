@@ -43,6 +43,7 @@ scripts[] = js/libs.min.js
 ; Foundation framework scripts (minified).
 ; Control specific components via Gruntfile.js.
 scripts[] = js/foundation.min.js
+scripts[] = js/uylong.js
 
 ; Theme scripts (minified).
 ; Grunt will compress any custom theme scripts matching the _*.js naming convention

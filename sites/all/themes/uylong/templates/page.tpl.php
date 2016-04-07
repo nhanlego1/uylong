@@ -32,63 +32,37 @@
     <?php endif; ?>
 
     <!-- Title, slogan and menu -->
+
     <?php if ($alt_header): ?>
-      <section class="row <?php print $alt_header_classes; ?>">
-
+      <section class="row header-content <?php print $alt_header_classes; ?>">
+       <div class="small-4 medium-3 large-4 columns">
         <?php if ($linked_logo): print $linked_logo; endif; ?>
+       </div>
 
-        <?php if ($site_name): ?>
-          <?php if ($title): ?>
-            <div id="site-name" class="element-invisible">
-              <strong>
-                <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home"><span><?php print $site_name; ?></span></a>
-              </strong>
-            </div>
-          <?php else: /* Use h1 when the content title is empty */ ?>
-            <h1 id="site-name">
-              <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home"><span><?php print $site_name; ?></span></a>
-            </h1>
-          <?php endif; ?>
-        <?php endif; ?>
-
-        <?php if ($site_slogan): ?>
-          <h2 title="<?php print $site_slogan; ?>" class="site-slogan"><?php print $site_slogan; ?></h2>
-        <?php endif; ?>
-
-        <?php if ($alt_main_menu): ?>
-          <nav id="main-menu" class="navigation" role="navigation">
-            <?php print ($alt_main_menu); ?>
-          </nav> <!-- /#main-menu -->
-        <?php endif; ?>
-
-        <?php if ($alt_secondary_menu): ?>
-          <nav id="secondary-menu" class="navigation" role="navigation">
-            <?php print $alt_secondary_menu; ?>
-          </nav> <!-- /#secondary-menu -->
+        <?php if (!empty($page['header'])): ?>
+          <!--.l-header-region -->
+          <div class="l-header-region small-8 medium-9 large-8 columns">
+              <?php print render($page['header']); ?>
+          </div>
+          <!--/.l-header-region -->
         <?php endif; ?>
 
       </section>
     <?php endif; ?>
     <!-- End title, slogan and menu -->
 
-    <?php if (!empty($page['header'])): ?>
-      <!--.l-header-region -->
-      <section class="l-header-region row">
-        <div class="columns">
-          <?php print render($page['header']); ?>
-        </div>
-      </section>
-      <!--/.l-header-region -->
-    <?php endif; ?>
+
 
   </header>
   <!--/.l-header -->
 
   <?php if (!empty($page['featured'])): ?>
     <!--.l-featured -->
-    <section class="l-featured row">
+    <section class="l-featured">
+      <div class="row">
       <div class="columns">
         <?php print render($page['featured']); ?>
+      </div>
       </div>
     </section>
     <!--/.l-featured -->

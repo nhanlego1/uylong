@@ -1,3 +1,181 @@
+/*
+* Css for desktop
+*/
 header.l-header{
     background-color:#000000 ;
+
+}
+.header-content{
+    padding: 10px;
+}
+/*search form*/
+#search-block-form .button.form-submit
+{
+    background: url(../images/btsearch.png) no-repeat;
+    cursor:pointer;
+    border: none;
+    font-size: 0px;
+    margin: 0;
+    padding: 0;
+    width: 55%;
+}
+#search-block-form .form-item-search-block-form input
+{
+margin: 1px 0 0rem 0;
+padding: 0.5rem;
+height: 2.2325rem;
+}
+section.block-search-form{
+    width: 65%;
+    vertical-align: middle;
+    margin-top: 37px;
+}
+/*hotline*/
+.block-block-1{
+    float: right;
+    margin-top: -52px;
+}
+.hotline-header .label-hotline{
+    background: url(../images/phone-icon.jpg) no-repeat left center;
+    padding-left: 40px;
+    color: #777760;
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.hotline-header .hotline-number{
+    font-size: 28px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #ffffff;
+}
+/*menu navigation*/
+section.l-featured{
+    background-color: #fc0606;
+}
+.block-menu-menu-primary-menu ul{
+    margin: 0px;
+}
+.block-menu-menu-primary-menu ul.menu li{
+    float: left;
+    vertical-align: middle;
+    padding: 15px 30px;
+    list-style: none;
+    border-right: 1px solid #fff;
+}
+.block-menu-menu-primary-menu ul.menu li.active, .block-menu-menu-primary-menu ul.menu li.active-hover{
+  background-color: #383838;
+
+}
+.block-menu-menu-primary-menu ul.menu li:first-child{
+    border-left: 1px solid #fff;
+}
+.block-menu-menu-primary-menu ul.menu li a{
+    color:#ffffff;
+    font-weight: bold;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+/*side bar menu*/
+.sidebar-first .block-menu-block-1{
+    margin-top: 40px;
+}
+.sidebar-first .menu-name-main-menu ul.menu{
+    margin: 0;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul{
+    background: #f5f5f5;
+}
+.sidebar-first .menu-name-main-menu ul.menu li{
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    clear: left;
+
+}
+.sidebar-first .menu-name-main-menu ul.menu li:before{
+    content: " .";
+    background: url(../images/bg-item.jpg) no-repeat left center;
+    height: 47px;
+    color: red;
+    height: 47px;
+    color: red;
+    position: absolute;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul li:before{
+    background: none;
+    content:"";
+}
+
+.sidebar-first .menu-name-main-menu ul.menu li div.parent-item{
+    border: 1px solid #e2e0e0;
+    padding: 10px 3px 10px 10px;
+    list-style: none;
+
+}
+.sidebar-first .menu-name-main-menu ul.menu li.expanded div.parent-item{
+    background: url(../images/arrow_down.jpg) no-repeat 98% center;
+}
+
+.sidebar-first .menu-name-main-menu ul.menu li ul li div.parent-item,
+.sidebar-first .menu-name-main-menu ul.menu li.expanded ul li div.parent-item{
+    border: none;
+    background: none;
+}
+
+.sidebar-first .menu-name-main-menu ul.menu li a{
+    color:#000;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.sidebar-first .menu-name-main-menu ul.menu li a:hover,
+.sidebar-first .menu-name-main-menu ul.menu li a.active,
+.sidebar-first .menu-name-main-menu ul.menu li a.active-trail{
+    color:#d70404;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul li{
+    margin: 0;
+    padding: 0;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul li div.parent-item{
+    margin: 0;
+    padding: 0;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul{
+    margin-top: 10px;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul li{
+    list-style-type: square;
+    margin-left: 30px;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul li a{
+    color: #000;
+    font-size: 12px;
+    font-weight: normal;
+    text-transform: inherit;
+}
+.sidebar-first .menu-name-main-menu ul.menu li ul li a:hover, .sidebar-first .menu-name-main-menu ul.menu li ul li a.active{
+    color:#d70404;
+}
+
+
+
+/*
+* Css for tablet
+*/
+@media only screen and (min-width:768px) and (max-width:1024px){
+    section.block-search-form{
+        margin-top: 20px;
+    }
+}
+
+/*
+* Css for mobile
+*/
+@media only screen and (max-width:767px){
+    section.block-search-form{
+        margin-top: 20px;
+    }
 }
