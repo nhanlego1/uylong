@@ -1,6 +1,9 @@
 /*
 * Css for desktop
 */
+body p{
+    margin-bottom: 8px;
+}
 header.l-header{
     background-color:#000000 ;
 
@@ -79,7 +82,7 @@ section.l-featured{
 
 /*side bar menu*/
 .sidebar-first .block-menu-block-1{
-    margin-top: 40px;
+    margin-top: 20px;
 }
 .sidebar-first .menu-name-main-menu ul.menu{
     margin: 0;
@@ -160,8 +163,80 @@ section.l-featured{
     color:#d70404;
 }
 
+/*block tieu bieu*/
+h2.block-title{
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    background: #ededed;
+    width: 100%;
+    clear: both;
+    padding: 5px 5px 5px 10px;
+    margin-bottom: 20px;
+}
+.views-field-field-images{
+    width: 220px;
+    height: 180px;
+    border-left: 1px solid #e2e2e2;
+    border-top: 1px solid #e2e2e2;
+    border-right: 1px solid #e2e2e2;
+    border-bottom: 5px solid #fc0606;
+    padding: 3px;
+    text-align: center;
+    vertical-align: middle;
+    margin-bottom: 10px;
+}
+.views-field-title{
+    text-align: center;
+    margin-bottom: 20px;
+}
+.views-field-title a{
+    color: #000;
+}
 
+.views-field-title a:hover{
+    color: #fc0606;
+}
 
+.product-lists{
+    margin-bottom: 40px;
+    height: 220px;
+}
+section.block-views{
+    clear:both;
+}
+
+/*Footer*/
+footer{
+    clear: both;
+}
+.footer ul.menu{
+    margin: -12px 0 0 20px;
+}
+.footer ul.menu li.last{
+    border: none;
+}
+.footer ul.menu li{
+    float:left;
+    padding: 0 10px;
+    list-style: none;
+}
+.footer ul.menu li a{
+    color:#949191; 
+}
+/*pager*/
+.pagination-centered{
+    clear:both;
+}
+/*banner*/
+.l-banner{
+ margin-top: 20px;
+ margin-bottom: 10px;
+}
+.highlight{
+    background: none!important;
+    border: none!important;
+}
 /*
 * Css for tablet
 */
@@ -177,5 +252,14 @@ section.l-featured{
 @media only screen and (max-width:767px){
     section.block-search-form{
         margin-top: 20px;
+    }
+    .block-menu-menu-primary-menu ul.menu li {
+        padding: 10px 5px;
+    }
+    .block-menu-menu-primary-menu ul.menu li a {
+        font-size: 11px;
+    }
+    .sidebar-first .menu-name-main-menu{
+        display: none;
     }
 }
