@@ -625,3 +625,20 @@ function uylong_migrate_product_save($data){
         }
       
 }
+
+/**
+ * Implement hook_view query_alter
+ */
+function uylong_migrate_views_query_alter(&$view, &$query) {
+    $node = menu_get_object('node');
+    if($view->name=='category'){
+        if($node && $node->type=='product'){
+            $query->where[]['conditions'][] = array(
+                'field'=>'node.nid',
+                'value'=>$node->nid,
+                'operator'=>'<>',
+            );
+        }
+    }
+    
+}

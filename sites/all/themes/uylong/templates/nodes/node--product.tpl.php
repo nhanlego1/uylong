@@ -138,3 +138,6 @@
     <?php print render($content['comments']); ?>
 
 </article>
+
+<h4><?php print t('Sản phẩm cùng loại') ?></h4>
+<?php print views_embed_view('category', 'page', array($node->field_category[LANGUAGE_NONE][0]['tid']));  ?>
