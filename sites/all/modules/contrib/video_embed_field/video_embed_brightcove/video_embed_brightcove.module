@@ -23,7 +23,7 @@ function video_embed_brightcove_video_embed_handler_info() {
     ),
     'defaults' => array(
       'width' => 640,
-      'height' => 360,
+      'height' => 480,
       'class' => '',
     ),
   );

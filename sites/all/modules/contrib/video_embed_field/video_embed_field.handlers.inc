@@ -28,7 +28,7 @@ function video_embed_field_video_embed_handler_info() {
     ),
     'defaults' => array(
       'width' => '100%',
-      'height' => 360,
+      'height' => 480,
       'autoplay' => 0,
       'vq' => 'large',
       'rel' => 0,
@@ -55,7 +55,7 @@ function video_embed_field_video_embed_handler_info() {
     ),
     'defaults' => array(
       'width' => '100%',
-      'height' => 360,
+      'height' => 480,
       'color' => '00adef',
       'portrait' => 1,
       'title' => 1,
@@ -197,7 +197,7 @@ function video_embed_field_handle_youtube($url, $settings) {
   $settings['wmode'] = 'opaque';
   $settings_str = urlencode(_video_embed_code_get_settings_str($settings));
 
-  $output['#markup'] = '<iframe class="' . check_plain($class) . '" width="100%" height="' . check_plain($settings['height']) . '" src="//www.youtube.com/embed/' . $id . '?' . $settings_str . '&autoplay=1" frameborder="0" allowfullscreen></iframe>';
+  $output['#markup'] = '<iframe class="' . check_plain($class) . '" width="100%" height="480px" src="//www.youtube.com/embed/' . $id . '?' . $settings_str . '&autoplay=1" frameborder="0" allowfullscreen></iframe>';
 
   return $output;
 }

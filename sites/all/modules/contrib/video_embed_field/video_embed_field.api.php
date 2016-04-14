@@ -45,7 +45,7 @@ function hook_video_embed_handler_info() {
     ),
     'defaults' => array(
       'width' =>'100%',
-      'height' => 360,
+      'height' => 480,
     ),
   );
 
