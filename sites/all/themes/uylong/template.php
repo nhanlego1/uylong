@@ -19,6 +19,9 @@ function uylong_preprocess_page(&$variables) {
     if (!empty($variables['node'])) {
     $variables['theme_hook_suggestions'][] = 'page__' . $variables['node']->type;
   }
+  if(arg(0)=='taxonomy' && arg(1)=='term' && arg(2)=='all'){
+      drupal_set_title('Sản phẩm');
+  }
 
   $variables['logo_img'] = '';
   if (!empty($variables['logo'])) {

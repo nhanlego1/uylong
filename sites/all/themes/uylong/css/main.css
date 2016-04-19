@@ -300,6 +300,9 @@ section.block-block-2{
 .view-category-home .views-field-name a:hover {
     color: #fc0606;
 }
+.cloud-zoom-container #wrap{
+    border: 1px solid #ececec;
+}
 /*
 * Css for tablet
 */
