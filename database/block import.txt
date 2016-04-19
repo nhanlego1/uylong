@@ -1,0 +1,61 @@
+$block = array();
+$block[] = array(
+  'block_custom' => array(
+  'info' => 'Contact Management', 
+  'format' => 'full_html', 
+  'title' => 'Contact Management', 
+  'body' => '<ul><li><a href=\"/node/693/webform-results\">Qu?n lí thông tin liên h?</a></li><li><a href=\"/node/693/edit\">S?a n?i dung liên h?</a></li></ul>', 
+  'weight' => '0', 
+  'cache' => '-1', 
+  'custom' => '0', 
+  'visibility' => '0', 
+  'pages' => '', 
+  'status' => '0', 
+  ),
+);
+
+$block[] = array(
+  'block_custom' => array(
+  'info' => 'Content Management', 
+  'format' => 'full_html', 
+  'title' => 'Content Management', 
+  'body' => '<ul><li><a href=\"/admin/manage/products?title=&amp;status_1=All\">Qu?n lí s?n ph?m</a></li><li><a href=\"/admin/structure/taxonomy/product\">Qu?n lí danh m?c s?n ph?m</a></li><li><a href=\"/node/add/product\">Thêm s?n ph?m</a></li></ul>', 
+  'weight' => '0', 
+  'cache' => '-1', 
+  'custom' => '0', 
+  'visibility' => '0', 
+  'pages' => '', 
+  'status' => '0', 
+  ),
+);
+
+$block[] = array(
+  'block_custom' => array(
+  'info' => 'Slideshow Management', 
+  'format' => 'full_html', 
+  'title' => 'Slideshow Management', 
+  'body' => '<ul><li><a href=\"/admin/manage/slideshow\">Qu?n lí Slideshow</a></li><li><a href=\"/node/add/slideshow\">Thêm Slideshow</a></li></ul>', 
+  'weight' => '0', 
+  'cache' => '-1', 
+  'custom' => '0', 
+  'visibility' => '0', 
+  'pages' => '', 
+  'status' => '0', 
+  ),
+);
+
+$block[] = array(
+  'block_custom' => array(
+  'info' => 'Video Management', 
+  'format' => 'full_html', 
+  'title' => 'Video Management', 
+  'body' => '<ul><li><a href=\"/admin/manage/video\">Qu?n lí Video</a></li><li><a href=\"/node/add/video\">Thêm Video</a></li></ul>', 
+  'weight' => '0', 
+  'cache' => '-1', 
+  'custom' => '0', 
+  'visibility' => '0', 
+  'pages' => '', 
+  'status' => '0', 
+  ),
+);
+

@@ -98,10 +98,7 @@ section.l-featured{
 
 }
 
-.sidebar-first .menu-name-main-menu ul.menu li ul li:before{
-    background: none;
-    content:"";
-}
+
 
 .sidebar-first .menu-name-main-menu ul.menu li div.parent-item{
     border-right: 1px solid #e2e0e0;
@@ -269,6 +266,39 @@ section.block-block-2{
     font-size: 12px;
     color:#949191;
     margin-top: 5px;
+}
+.cloud-zoom-gallery-thumbs{
+    margin-top: 10px;
+}
+.cloud-zoom-gallery-thumbs a{
+    margin-right: 5px;
+}
+.cloud-zoom-gallery-thumbs a img{
+    border:  1px solid #ececec;
+    width: 102px;
+    height: 74px;
+    margin-bottom: 10px;
+}
+.view-category-home .views-field-field-image {
+    height: 180px;
+    border-left: 1px solid #e2e2e2;
+    border-top: 1px solid #e2e2e2;
+    border-right: 1px solid #e2e2e2;
+    border-bottom: 5px solid #fc0606;
+    padding: 3px;
+    text-align: center;
+    vertical-align: middle;
+    margin-bottom: 10px;
+}
+.view-category-home .views-field-name {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.view-category-home .views-field-name a {
+    color: #000;
+}
+.view-category-home .views-field-name a:hover {
+    color: #fc0606;
 }
 /*
 * Css for tablet
